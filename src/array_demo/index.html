@@ -1,0 +1,74 @@
+<head>
+  <title> Wasm Trial </title>
+  <script>
+    class Decoder {
+      static decoder = new TextDecoder();
+
+      static to_string(buffer, offset, length) {
+        const [str_offset, arr_length] = new Uint32Array(buffer, offset, length);
+        const bytes = new Uint8Array(buffer, str_offset, arr_length);
+        return this.decoder.decode(bytes);
+      }
+
+      static to_int_array(buffer, offset, length) {
+        const [int_arr_offset, arr_length] = new Uint32Array(buffer, offset, length);
+        const bytes = new Uint32Array(buffer, int_arr_offset, arr_length);
+        return bytes.slice(0, arr_length);
+      }
+    }
+
+    WebAssembly
+      .instantiateStreaming(fetch("main.wasm"), { env: {} })
+      .then(wasm => {
+        const { 
+          memory: { buffer },
+          get_strings,
+          get_string_at,
+          get_ints,
+          get_int_at,
+          get_array_attr_count,
+        } = wasm.instance.exports;
+
+        const array_attr_count = get_array_attr_count();
+        let res = '';
+
+        res += 'Demo -- C variable to HTML via WASM <br><br>';
+
+        // Print array of C strings
+        {
+          res += 'Array of C strings<br>';
+          res += '<ul>'
+          const string_arr_offset = get_strings();
+          const [, string_array_length] = new Uint32Array(buffer, string_arr_offset, array_attr_count);
+          for (let i = 0; i < string_array_length; i++) {
+            const string_offset = get_string_at(string_arr_offset, i);
+            res += '<li>' + Decoder.to_string(buffer, string_offset, array_attr_count) + '</li>';
+          }
+          res += '</ul>'
+        }
+
+        // Print 2D Array of C integers
+        {
+          res += '2D Array of C integers<br>';
+          res += '<ul>';
+          const int_arr_arr_offset = get_ints();
+          const [, int_array_length] = new Uint32Array(buffer, int_arr_arr_offset, array_attr_count);
+          for (let i = 0; i < int_array_length; i++) {
+            const int_arr_offset = get_int_at(int_arr_arr_offset, i);
+            res += '<li>' + Decoder.to_int_array(buffer, int_arr_offset, array_attr_count) + '</li>';
+          }
+          res += '</ul>'          
+        }        
+        document.getElementById('out').innerHTML = res;
+      });
+  </script>
+  <style>
+    body {
+      padding: 16px 8px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="out"></div>
+</body>
