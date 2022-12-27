@@ -4,6 +4,7 @@
   "homepage": "https://github.com/hkleungai/web-assembly-experiment",
   "author": "Jimmy Leung",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "deploy": "cross-env NODE_DEBUG=gh-pages gh-pages -d src"
   },
