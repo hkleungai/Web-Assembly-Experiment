@@ -1,0 +1,39 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Install LLVM and WASI SDK
+
+on:
+  push:
+    branches: 
+      - develop
+  pull_request:
+    branches: 
+      - develop
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install LLVM and WASI SDK
+        shell: bash
+        run: |
+          make install--llvm-and-wasi-sdk
+      - name: Make WASM
+        shell: bash
+        run: |
+          for demo_dir in $(ls -d src/*_demo);
+          do
+              demo_target=$(echo $demo_dir | sed 's/src\///g');
+              make demo demo_target=$demo_target include_wasi_sdk=1 verbose=1;
+          done
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./src
