@@ -1,7 +1,7 @@
-#ifndef INTERNAL_HEADER
-#define INTERNAL_HEADER
+#ifndef __USER_DEFINED__INTERNAL_HEADER
+#define __USER_DEFINED__INTERNAL_HEADER
 
-#include "../utils/Array.h"
+#include "../utils/c/Array.h"
 
 namespace Internal {
   /* STRING */
@@ -15,8 +15,8 @@ namespace Internal {
 
   /* INT */
   int a[3] = { 1, 2, 3 }
-    , b[3] = { 3, 2, 5 }
-    , c[3] = { 3, 7, 6 };
+    , b[4] = { 3, 2, 5, 9 }
+    , c[5] = { 3, 7, 6, 2, 7 };
 
   Array<int> _ints[] = {
     make_array(int, a),
