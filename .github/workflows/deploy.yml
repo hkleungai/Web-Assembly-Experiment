@@ -1,0 +1,39 @@
+name: Build WASM && Fire Deployment Action
+
+on:
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches: 
+      - master
+  workflow_run:
+    workflows: ["Test JS Utils"]
+    types: [completed]
+
+jobs:
+  deploy:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install LLVM and WASI SDK
+        shell: bash
+        run: |
+          make install--llvm-and-wasi-sdk
+      - name: Make WASM
+        shell: bash
+        run: |
+          for demo_dir in $(ls -d src/*_demo);
+          do
+              demo_target=$(echo $demo_dir | sed 's/src\///g');
+              make demo demo_target=$demo_target include_wasi_sdk=1 verbose=1;
+          done
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./src

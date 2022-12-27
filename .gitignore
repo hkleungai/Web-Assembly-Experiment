@@ -17,3 +17,4 @@ junit.xml
 .DS_Store
 wasi-sdk
 node_modules
+*.wasm
