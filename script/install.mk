@@ -11,7 +11,13 @@ WASK_SDK_SYSROOT_TAR = wasi-sysroot-$(WASI_SDK_FULL_VERSION).tar.gz
 # See https://github.com/jedisct1/libclang_rt.builtins-wasm32.a
 WASK_SDK_MAGIC_TAR = libclang_rt.builtins-wasm32-wasi-$(WASI_SDK_FULL_VERSION).tar.gz
 
-install--llvm:
+install--binaryen:
+	@echo "Installing binaryen..."
+	brew install binaryen;
+	rm -rf /usr/local/bin/wasm*
+	@echo "Installation on binaryen DONE"
+
+install--llvm: install--binaryen
 	@echo "Installing LLVM..."
 	brew install llvm;
 	@echo "Installation on LLVM DONE"

@@ -37,10 +37,13 @@ ifeq ($(verbose), 1)
 	VERBOSE = -v
 endif
 
-CLANG_WITH_FLAGS = 		\
+MODEL = -mexec-model=reactor
+
+CLANG_WITH_FLAGS =		\
 	$(CLANG)			\
 	$(WARNING)			\
 	$(STD)				\
 	$(TARGET)			\
 	$(OPTIMIZATION)		\
 	$(LINKER)			\
+	$(MODEL)

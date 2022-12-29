@@ -36,7 +36,10 @@
         get_ints,
         get_int_at,
         get_array_attr_count,
+        _initialize,
       } = wasm.instance.exports;
+
+      _initialize();
 
       const array_attr_count = get_array_attr_count();
       let res = '';
