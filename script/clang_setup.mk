@@ -39,6 +39,8 @@ endif
 
 MODEL = -mexec-model=reactor
 
+MACRO = -DWEB_ENV		\
+
 CLANG_WITH_FLAGS =		\
 	$(CLANG)			\
 	$(WARNING)			\
@@ -46,4 +48,5 @@ CLANG_WITH_FLAGS =		\
 	$(TARGET)			\
 	$(OPTIMIZATION)		\
 	$(LINKER)			\
-	$(MODEL)
+	$(MODEL)			\
+	$(MACRO)

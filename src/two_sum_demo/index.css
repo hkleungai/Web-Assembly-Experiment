@@ -1,0 +1,34 @@
+body {
+  padding: 16px 8px;
+  font-size: 20px;
+}
+
+div#actions {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 8px;
+}
+
+div#actions button {
+  height: 32px;
+}
+
+div#problem-statement-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+div#problem-statement-content p {
+  margin: 0;
+}
+
+div#solution,
+div#test-case {
+  display: none;
+}
+
+b.answer_item {
+  color: green;
+}
