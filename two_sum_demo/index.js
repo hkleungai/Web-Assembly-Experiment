@@ -10,6 +10,7 @@ document.getElementById('show-problem-statement').onclick = function () {
   problem_statement_div.style.display = 'block';
 }
 
+import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/es/highlight.min.js';
 let src_code;
 document.getElementById('show-solution').onclick = async function () {
   if (!src_code)
@@ -20,6 +21,8 @@ document.getElementById('show-solution').onclick = async function () {
   problem_statement_div.style.display = 'none';
   test_case_div.style.display = 'none';
   solution_div.style.display = 'block';
+
+  hljs.highlightAll();
 }
 
 const ARRAY_ITEM_COUNT_PER_LINE = 10;
@@ -29,13 +32,11 @@ document.getElementById('generate-test-case').onclick = function () {
 
   const num_lines = Math.ceil(input_array.length / ARRAY_ITEM_COUNT_PER_LINE);
   let res = Array(num_lines).fill('');
-  input_array.forEach(function (a, i) {
-    const line_index = Math.floor(i / ARRAY_ITEM_COUNT_PER_LINE);
-    if (ans_array.includes(i))
-      res[line_index] += `<b class="answer_item">${a}</b>,&emsp;`
-    else
-      res[line_index] += `${a},&emsp;`
-  })
+  input_array.forEach(function (array_elem, array_index) {
+    const line_index = Math.floor(array_index / ARRAY_ITEM_COUNT_PER_LINE);
+    const rendered_elem = ans_array.includes(array_index) ? `<b class="answer_item">${array_elem}</b>` : array_elem;
+    res[line_index] += `${rendered_elem},&emsp;`
+  });
 
   document.getElementById('input-array').innerHTML = res.join('<br>');
   document.getElementById('target-sum').innerHTML = target_sum;
