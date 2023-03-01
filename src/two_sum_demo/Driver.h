@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <ctime>
 #include <vector>
 
 #define __USER_DEFINED__SOLUTION_IMPLEMENTATION
@@ -17,9 +19,6 @@ public:
 };
 
 #ifdef __USER_DEFINED__DRIVER_IMPLEMENTATION
-
-#include <algorithm>
-#include <ctime>
 
 #ifdef WEB_ENV
   #define time js__time

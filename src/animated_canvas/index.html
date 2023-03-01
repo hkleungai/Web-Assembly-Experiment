@@ -1,0 +1,103 @@
+<head>
+  <title> Wasm Trial </title>
+  <script type="module">
+    import { WASI, File, PreopenDirectory } from "../utils/js/index.js";
+    import WasmProxy from '../utils/js/WasmProxy.js';
+    class Decoder {
+      static decoder = new TextDecoder();
+
+      static to_string(buffer, offset, length) {
+        const [str_offset, arr_length] = new Uint32Array(buffer, offset, length);
+        const bytes = new Uint8Array(buffer, str_offset, arr_length);
+        return this.decoder.decode(bytes);
+      }
+
+      static to_int_array(buffer, offset, length) {
+        const [int_arr_offset, arr_length] = new Uint32Array(buffer, offset, length);
+        const bytes = new Uint32Array(buffer, int_arr_offset, arr_length);
+        return bytes.slice(0, arr_length);
+      }
+    }
+
+    let _buffer;
+    const wasi = new WASI([], [], []);
+    const wasm_source = fetch("main.wasm");
+    const wasm_imports = new WasmProxy({
+      wasi_snapshot_preview1: wasi.wasiImport,
+      env: {
+        js__printf: (str_ptr) => console.log(Decoder.to_string(_buffer, str_ptr, 2)),
+      },
+    });
+
+    WebAssembly
+      .instantiateStreaming(wasm_source, wasm_imports)
+      .then(async (wasm) => {
+        _buffer = wasm.instance.exports.memory.buffer;
+        return wasm;
+      })
+      .then(async (wasm) => {
+        wasi.start(wasm.instance);
+        return wasm;
+      })
+      .then(wasm => {
+        const {
+          memory: { buffer },
+          render_c_pixels,
+          get_c_pixels,
+          get_canvas_width,
+          get_canvas_height,
+          get_canvas_color_channel,
+        } = wasm.instance.exports;
+
+        const canvas_width = get_canvas_width();
+        const canvas_height = get_canvas_height();
+        const canvas_color_channel = get_canvas_color_channel();
+
+        paint_canvas('canvas_1');
+        // paint_canvas('canvas_2');
+        // paint_canvas('canvas_3');
+
+        function paint_canvas(id) {
+          // Get our canvas element from our index.html
+          const canvasElement = document.getElementById(id);
+          canvasElement.style.position = 'sticky';
+          canvasElement.width = canvas_width;
+          canvasElement.height = canvas_height;
+
+          // Set up Context and ImageData on the canvas
+          const canvasContext = canvasElement.getContext("2d");
+          const canvasImageData = canvasContext.createImageData(canvas_width, canvas_height);
+
+          // Set the values to the canvas image data
+          render_c_pixels(Math.E);
+          canvasImageData.data.set(new Uint32Array(buffer, get_c_pixels(), canvas_width * canvas_height * canvas_color_channel));
+
+          // Clear the canvas
+          canvasContext.clearRect(0, 0, canvas_width, canvas_height);
+
+          // Place the new generated checkerboard onto the canvas
+          canvasContext.putImageData(canvasImageData, 0, 0);
+        }
+
+      });
+  </script>
+  <style>
+    body {
+      padding: 16px 8px;
+      font-size: 20px;
+    }
+
+    div#out {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div id="out">
+    <div><canvas id="canvas_1"></canvas></div>
+    <div><canvas id="canvas_2"></canvas></div>
+    <div><canvas id="canvas_3"></canvas></div>
+  </div>
+</body>

@@ -1,4 +1,4 @@
-WASI_SDK_MAJOR_VERSION = 17
+WASI_SDK_MAJOR_VERSION = 19
 WASI_SDK_MINOR_VERSION = 0
 WASI_SDK_FULL_VERSION = $(WASI_SDK_MAJOR_VERSION).$(WASI_SDK_MINOR_VERSION)
 
@@ -24,7 +24,8 @@ install--llvm: install--binaryen
 
 install--llvm-and-wasi-sdk: install--llvm
 	$(eval LLVM_VERSION := $(shell brew list llvm --versions | sed -e "s/llvm //g"))
-	
+	$(eval CLANG_VERSION := $(shell echo "$(LLVM_VERSION)" | sed -r "s/_[0-9]+//g"))
+
 	@echo "Installing WASI SDK..."
 	\
 	cd /usr/local/opt/ \
@@ -35,11 +36,11 @@ install--llvm-and-wasi-sdk: install--llvm
 	\
   	cd /usr/local/opt/ \
 	&& wget $(WASI_SDK_RELEASE_DOMAIN)/$(WASK_SDK_MAGIC_TAR) \
-	&& tar xvf $(WASK_SDK_MAGIC_TAR) -C ./llvm/lib/clang/$(LLVM_VERSION)
+	&& tar xvf $(WASK_SDK_MAGIC_TAR) -C ./llvm/lib/clang/$(CLANG_VERSION)
 
 	@echo "Cleaning up..."
 	\
 	cd /usr/local/opt/ \
-	&& rm $(WASK_SDK_SYSROOT_TAR) $(WASK_SDK_MAGIC_TAR);
-  
+	&& rm $(WASK_SDK_SYSROOT_TAR)* $(WASK_SDK_MAGIC_TAR)*;
+
 	@echo "Installation on WASI SDK DONE"

@@ -9,19 +9,18 @@ STD = -std=c++17
 
 OPTIMIZATION = -O3
 
-LINKER =					\
-	-Wl,--no-entry			\
-	-Wl,--export-dynamic	\
-	-Wl,--allow-undefined	\
-	-Wl,--strip-all 		\
-	-Wl,--strip-debug 		\
+LINKER =							\
+	-Wl,--export-dynamic			\
+	-Wl,--allow-undefined			\
+	-Wl,--strip-all 				\
+	-Wl,--strip-debug 				\
 	-Wl,--lto-O3
 
 ifeq ($(include_wasi_sdk), 1)
 	DISABLE =					\
     	-fno-builtin        	\
     	-fvisibility=hidden
-	WASI_SYSROOT = --sysroot /usr/local/opt/wasi-sysroot
+	WASI_SYSROOT = --sysroot=/usr/local/opt/wasi-sysroot
 	_TARGET = --target=wasm32-wasi
 	TARGET = $(_TARGET) $(WASI_SYSROOT) $(DISABLE)
 else

@@ -1,0 +1,23 @@
+<head>
+  <title> Wasm Trial </title>
+  <script type="module">
+    import WasmProxy from '../utils/js/WasmProxy.js';
+
+    WebAssembly
+      .instantiateStreaming(fetch("main.wasm"), new WasmProxy({ env: { fire: () => {} } }))
+      .then(wasm => {
+        console.log(wasm.instance.exports);
+        const updated_content = `The Count is, ${wasm.instance.exports.get_count(2 * Math.PI)}`;
+        document.getElementById('out').innerHTML = updated_content;
+      });
+  </script>
+  <style>
+    body {
+      padding: 16px 8px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="out"></div>
+</body>
