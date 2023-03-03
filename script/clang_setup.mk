@@ -1,4 +1,4 @@
-CLANG = /usr/local/opt/llvm/bin/clang++
+CLANG = $(shell brew --prefix LLVM)/bin/clang++
 
 WARNING = 					\
 	-Wall 					\
@@ -21,7 +21,7 @@ ifeq ($(include_wasi_sdk), 1)
 	DISABLE =					\
     	-fno-builtin        	\
     	-fvisibility=hidden
-	WASI_SYSROOT = --sysroot /usr/local/opt/wasi-sysroot
+	WASI_SYSROOT = --sysroot $(shell brew --prefix)/opt/wasi-sysroot
 	_TARGET = --target=wasm32-wasi
 	TARGET = $(_TARGET) $(WASI_SYSROOT) $(DISABLE)
 else

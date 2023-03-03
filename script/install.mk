@@ -11,10 +11,16 @@ WASK_SDK_SYSROOT_TAR = wasi-sysroot-$(WASI_SDK_FULL_VERSION).tar.gz
 # See https://github.com/jedisct1/libclang_rt.builtins-wasm32.a
 WASK_SDK_MAGIC_TAR = libclang_rt.builtins-wasm32-wasi-$(WASI_SDK_FULL_VERSION).tar.gz
 
+ifneq ($$EUID, "0")
+	SUDO_OR_NORMAL = sudo
+else
+	SUDO_OR_NORMAL =
+endif
+
 install--binaryen:
 	@echo "Installing binaryen..."
 	brew install binaryen;
-	rm -rf /usr/local/bin/wasm*
+	rm -rf $(shell brew --prefix)/bin/wasm-opt
 	@echo "Installation on binaryen DONE"
 
 install--llvm: install--binaryen
@@ -24,22 +30,24 @@ install--llvm: install--binaryen
 
 install--llvm-and-wasi-sdk: install--llvm
 	$(eval LLVM_VERSION := $(shell brew list llvm --versions | sed -e "s/llvm //g"))
+	$(eval CLANG_VERSION := $(shell echo "$(LLVM_VERSION)" | sed -r "s/_[0-9]+//g"))
+	$(eval BREW_PKG_DIR := $(shell brew --prefiX llvm | sed "s/\/llvm//g"))
 	
 	@echo "Installing WASI SDK..."
 	\
-	cd /usr/local/opt/ \
-	&& wget $(WASI_SDK_RELEASE_DOMAIN)/$(WASK_SDK_SYSROOT_TAR) \
-	&& tar xvf $(WASK_SDK_SYSROOT_TAR)
+	cd $(BREW_PKG_DIR) \
+	&& $(SUDO_OR_NORMAL) wget $(WASI_SDK_RELEASE_DOMAIN)/$(WASK_SDK_SYSROOT_TAR) \
+	&& $(SUDO_OR_NORMAL) tar xvf $(WASK_SDK_SYSROOT_TAR)
 
 	@echo "Installing WASI Magic Tar..."
 	\
-  	cd /usr/local/opt/ \
-	&& wget $(WASI_SDK_RELEASE_DOMAIN)/$(WASK_SDK_MAGIC_TAR) \
-	&& tar xvf $(WASK_SDK_MAGIC_TAR) -C ./llvm/lib/clang/$(LLVM_VERSION)
+  	cd $(BREW_PKG_DIR) \
+	&& $(SUDO_OR_NORMAL) wget $(WASI_SDK_RELEASE_DOMAIN)/$(WASK_SDK_MAGIC_TAR) \
+	&& $(SUDO_OR_NORMAL) tar xvf $(WASK_SDK_MAGIC_TAR) -C ./llvm/lib/clang/$(CLANG_VERSION)
 
 	@echo "Cleaning up..."
 	\
-	cd /usr/local/opt/ \
-	&& rm $(WASK_SDK_SYSROOT_TAR) $(WASK_SDK_MAGIC_TAR);
+	cd $(BREW_PKG_DIR) \
+	&& $(SUDO_OR_NORMAL) rm $(WASK_SDK_SYSROOT_TAR) $(WASK_SDK_MAGIC_TAR)*;
   
 	@echo "Installation on WASI SDK DONE"

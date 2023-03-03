@@ -1,4 +1,4 @@
-WASM_OPT = /usr/local/opt/binaryen/bin/wasm-opt
+WASM_OPT = "$(shell brew --prefix binaryen)/bin/wasm-opt"
 
 OPTIMIZATION = -O3
 
