@@ -1,49 +1,52 @@
-# Introduction
+# Web Assembly (WASM) with C
+
+## Introduction
 
 This is a small experiment / playground for my C-style WASM learning.
 
 **Due to project nature, the web frontend scripts is probably never gonna be optimized nor made ready for production**  😂😂😂😂
 
-# Compilation
+## Compilation
 
-This project runs with [GNU Make].
-In Mac OS, you may simply do,
+This project runs with [GNU Make] in Mac. 
+
 ```sh
 brew install make
 ```
 
-The suggested beginning tool is [LLVM], which can be installed with 
-```bassh
-make install--llvm
+Install toolchain.
+
+```sh
+make install toolchain="<toolchain>"
 ```
 
-For demo project involving C/C++ library, 
-you may also want to include [WASI SDK] support,
-```sh
-make install--llvm-and-wasi-sdk
-```
+Compile C++ source file to wasm.
 
-Create the assembly files for various demo.
-Right now "array_demo" is the only available demo_target.
 ```sh
-# Compile with conventional LLVM
-make demo demo_target=...
-# Compile with verbose flag
-make demo demo_target=... verbose=1
-# Compile with LLVM and WASK SDK tool
-make demo demo_target=... include_wasi_sdk=1
+make src/foo/bar.wasm
 ```
 
 Expose `src` to local server. Open `http://localhost:8080` to view the site.
 
-# Remarks
+For more details, run the help command.
+
+```sh
+make help
+```
+
+## Remarks
+
+### OS
+
+This project is developed in a Mac machine.
+Compilation on other operating systems is not guaranteed to work.
 
 ### Compilation Tool Alternatives
 
-As of 2022, `zig` seems to be a more promising way to build WASM from C/C++ source code. 
+As of 2022, `zig` seems to be a more promising way to build WASM from C/C++ source code.
 See its [official github page][Zig Github] and [this post][Zig CC Intro].
 
-However, it still faces certain [issues][Zig CC Issues] that have not yet be overcomed. 
+However, it still faces certain [issues][Zig CC Issues] that have not yet be overcomed.
 And for now, substituting zig with my current LLVM-based build system seems not the best option.
 
 Anyhow, the exciting development of zig is still worth to be closely monitored. 👀 👀

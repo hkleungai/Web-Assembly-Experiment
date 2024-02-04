@@ -2,10 +2,10 @@ name: Build WASM && Fire Deployment Action
 
 on:
   push:
-    branches: 
+    branches:
       - master
   pull_request:
-    branches: 
+    branches:
       - master
   workflow_run:
     workflows: ["Test JS Utils"]
@@ -23,14 +23,13 @@ jobs:
       - name: Install LLVM and WASI SDK
         shell: bash
         run: |
-          make install--llvm-and-wasi-sdk
+          make install toolchain="llvm-wasi"
       - name: Make WASM
         shell: bash
         run: |
-          for demo_dir in $(ls -d src/*_demo);
+          for target in $(ls -d src/*_demo);
           do
-              demo_target=$(echo $demo_dir | sed 's/src\///g');
-              make demo demo_target=$demo_target include_wasi_sdk=1 verbose=1;
+              make -B $target/main.wasm include-wasi-sdk=1 verbose=1;
           done
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

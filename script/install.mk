@@ -17,6 +17,17 @@ else
 	SUDO_OR_NORMAL =
 endif
 
+install:
+    ifndef toolchain
+		@echo "Please supply a value for \`toolchain\`."
+    else ifeq ($(toolchain), llvm)
+		@make install--llvm
+    else ifeq ($(toolchain), llvm-wasi)
+		@make install--llvm-and-wasi-sdk
+    else
+		@echo "Unimplemented toolchain. Please run \`make help\` to see for the available options."
+    endif
+
 install--binaryen:
 	@echo "Installing binaryen..."
 	brew install binaryen;
@@ -59,3 +70,8 @@ install--llvm-and-wasi-sdk: install--llvm
 	&& $(SUDO_OR_NORMAL) rm $(WASK_SDK_SYSROOT_TAR) $(WASK_SDK_MAGIC_TAR)*;
 
 	@echo "Installation on WASI SDK DONE"
+
+install--base64:
+	@echo "Installing base64..."
+	brew install base64;
+	@echo "Installation on base64 DONE"

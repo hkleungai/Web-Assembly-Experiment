@@ -17,7 +17,7 @@ LINKER =					\
 	-Wl,--strip-debug 		\
 	-Wl,--lto-O3
 
-ifeq ($(include_wasi_sdk), 1)
+ifeq ($(include-wasi-sdk), 1)
 	DISABLE =					\
     	-fno-builtin        	\
     	-fvisibility=hidden
