@@ -1,6 +1,8 @@
 #include <vector>
 
+#ifdef __USER_DEFINED__DRIVER_IMPLEMENTATION
 #define __USER_DEFINED__SOLUTION_IMPLEMENTATION
+#endif
 #include "Solution.h"
 
 class Driver {
@@ -36,7 +38,7 @@ int get_rand_int(int lower, int upper) {
   return rand() % (upper - lower + 1) + lower;
 }
 
-Driver::Driver(): input_array(vector<int>(INPUT_SIZE)) {};
+Driver::Driver(): input_array(std::vector<int>(INPUT_SIZE)) {};
 
 void Driver::randomize_input() {
   target_sum = get_rand_int(20, 100);
@@ -49,5 +51,3 @@ void Driver::solve() {
 }
 
 #endif
-
-#undef __USER_DEFINED__SOLUTION_IMPLEMENTATION

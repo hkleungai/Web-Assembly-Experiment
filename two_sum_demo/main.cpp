@@ -1,7 +1,9 @@
 #include <algorithm>
 #include <ctime>
+#include <vector>
 
 #include "../utils/c/extern.h"
+
 #define __USER_DEFINED__DRIVER_IMPLEMENTATION
 #include "Driver.h"
 
@@ -11,7 +13,7 @@ EXTERN void randomize_input() {
   driver.randomize_input();
 }
 
-EXTERN vector<int>* get_input_array() {
+EXTERN std::vector<int>* get_input_array() {
   return &driver.input_array;
 }
 
@@ -27,7 +29,7 @@ EXTERN void solve() {
   driver.solve();
 }
 
-EXTERN vector<int>* get_ans_array() {
+EXTERN std::vector<int>* get_ans_array() {
   return &driver.ans_array;
 }
 
