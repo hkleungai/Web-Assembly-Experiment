@@ -6,8 +6,14 @@ import util from 'util';
 import WasmProxy from '../WasmProxy.js';
 
 const target = {
-  node: {
-    nested: 1,
+  __virtual_value: 1,
+  get node() {
+    const self = this;
+    return {
+      get nested() {
+        return self.__virtual_value;
+      },
+    }
   }
 };
 const proxy = new WasmProxy(target);
@@ -22,7 +28,7 @@ assert.deepEqual(
   'should copy target attribute to `proxy`'
 );
 assert.ok(
-  target.node.nested === proxy.node.nested, 
+  target.node.nested === proxy.node.nested,
   'should copy nested target attribute to `proxy`'
 );
 
@@ -34,10 +40,14 @@ assert.ok(
 assert(
   non_exist_node === proxy.non_exist_node,
   'should not reconstruct proxy at non-exist node',
-); 
+);
 assert.throws(
   non_exist_node,
-  { name: 'Wasm Error', message: '"non_exist_node" is not implemented' },
+  { name: 'Wasm Error', message: '"proxy.non_exist_node()" is not implemented' },
+);
+assert.throws(
+  () => non_exist_node(1,2,3),
+  { name: 'Wasm Error', message: '"proxy.non_exist_node(1, 2, 3)" is not implemented' },
 );
 
 const non_exist_nested_node = proxy.non_exist_node.non_exist_nested_node;
@@ -51,5 +61,9 @@ assert.ok(
 );
 assert.throws(
   non_exist_nested_node,
-  { name: 'Wasm Error', message: '"non_exist_node.non_exist_nested_node" is not implemented' },
+  { name: 'Wasm Error', message: '"proxy.non_exist_node.non_exist_nested_node()" is not implemented' },
+);
+assert.throws(
+  () => non_exist_nested_node(12,    30),
+  { name: 'Wasm Error', message: '"proxy.non_exist_node.non_exist_nested_node(12, 30)" is not implemented' },
 );
